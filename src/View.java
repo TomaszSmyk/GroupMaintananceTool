@@ -4,15 +4,16 @@ import java.awt.*;
 public class View extends JFrame {
     private static final Dimension windowDimension = new Dimension(800,800);
     private JTabbedPane mainPane;
-    private JComboBox<String> groupComboBox;
+    public JComboBox<String> groupComboBox;
     private JTextField textField1;
     private JTextField fNameTextField;
     private JButton logOutButton;
     private JButton addButton;
     private JTextField lNameTextField;
     private JComboBox<String> groupComboBoxDelete;// todo change to jtextfield
-    private JTextField studentIndexTextField;
-    private JTextField studentEmailTextField;
+    private JTextField indexAddTextField;
+    private JTextField emailAddTextField;
+    private JTable studentTable;
 
     public View() {
         setSize(windowDimension);
@@ -28,9 +29,10 @@ public class View extends JFrame {
             }
         });
 
+        addButton.addActionListener(new AddController(fNameTextField, lNameTextField, indexAddTextField, emailAddTextField));
 
         Controller controllerActionListener = new Controller(fNameTextField, lNameTextField, groupComboBox);
-        addButton.addActionListener(controllerActionListener);
+//        addButton.addActionListener(controllerActionListener);
         groupComboBox.addActionListener(controllerActionListener);
     }
 
@@ -50,4 +52,7 @@ public class View extends JFrame {
 //        new View();
     }
 
+    private void createUIComponents() {
+        groupComboBox = Model.studentGroupCombobox;
+    }
 }

@@ -32,15 +32,16 @@ public class InsertApp {
         }
     }
 
-    public void insertStudent(String StudentFirstName, String StudentSecondName, int StudentIndex, String StudentEmail) {
-        String sql = "INSERT INTO Student(StudentFirstName, StudentSecondName, StudentIndex, StudentEmail) VALUES (?,?,?,?)";
+    public void insertStudent(String StudentFirstName, String StudentSecondName, int StudentIndex, String StudentEmail, int GroupID) {
+        String sql = "INSERT INTO Student(StudentFirstName, StudentSecondName, StudentIndex, StudentEmail, GroupID) VALUES (?,?,?,?,?)";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, StudentFirstName);
             pstmt.setString(2, StudentSecondName);
             pstmt.setInt(3, StudentIndex);
-            pstmt.setString(3, StudentEmail);
+            pstmt.setString(4, StudentEmail);
+            pstmt.setInt(5, GroupID);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

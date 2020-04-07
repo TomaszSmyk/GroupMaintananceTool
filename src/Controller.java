@@ -1,4 +1,3 @@
-import javax.sound.midi.Soundbank;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +41,16 @@ public class Controller implements ActionListener {
     private void updateStudentGroups() {
         for(String element: Model.studentGroupData) {
             groupComboBox.addItem(element);
+        }
+    }
+    public static int getGroupNumber() {
+        if (Model.studentGroupCombobox.getSelectedItem() == null || Model.studentGroupCombobox.getSelectedItem().equals("SELECT")) {
+            Object[] groupToChose = Model.studentGroupData;
+            int groupNum = Integer.parseInt((String) JOptionPane.showInputDialog(new JFrame(), "Please chose student group:", "Group number", JOptionPane.PLAIN_MESSAGE, null, groupToChose, "0"));
+            System.out.println("Group number chosen: " + groupNum);
+            return groupNum;//todo return correct value from option pane
+        } else {
+            return Integer.parseInt((String) Model.studentGroupCombobox.getSelectedItem());//todo return correct value from View.groupComboBox
         }
     }
 }
