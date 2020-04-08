@@ -6,15 +6,16 @@ import java.util.Arrays;
 
 public class LoginForm extends JFrame {
 
-    private JTextField textField1;
-    private JPasswordField passwordField1;
+    private JTextField loginField;
+    private JPasswordField passwordField;
     private JButton logInButton;
     private JPanel mainPane;
     private static char[] correctPassword = {'a', 'b', 'c'};
+//    public String login; //todo make it more secure
 
     public LoginForm() {
         LogInController logInController = new LogInController();
-        passwordField1.addActionListener(logInController);
+        passwordField.addActionListener(logInController);
         logInButton.addActionListener(logInController);
         setSize(new Dimension(250, 450));
 
@@ -24,12 +25,14 @@ public class LoginForm extends JFrame {
         setVisible(true);
     }
 
-    private class LogInController implements ActionListener{
+    private class LogInController implements ActionListener{ //todo check if login is correct, checks from database
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             if(actionEvent.getActionCommand().equals("password")) {
-                char[] enteredPassword = passwordField1.getPassword();
+                char[] enteredPassword = passwordField.getPassword();
                 if (isPasswordCorrect(enteredPassword)) {
+                    View.login = loginField.getText();
+                    System.out.println("Log: " + View.login);
                     JOptionPane.showMessageDialog(new JFrame(), "Success");
                     new View();
                     dispose();

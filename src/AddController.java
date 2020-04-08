@@ -21,10 +21,11 @@ public class AddController implements ActionListener {
         String action = actionEvent.getActionCommand();
         InsertApp studentDB = new InsertApp();
         BiPredicate<String, String> compare = Object::equals;
-        if(compare.test(action, "add")) {
+        if(compare.test(action, "add")) { //todo make it refresh presence
             int groupNum = Controller.getGroupNumber();
             System.out.println("Added: " + fNameTextField.getText() + " " + lNameTextField.getText() + " " + indexAddTextField.getText() + " " + emailAddTextField.getText() + " " + groupNum);
             studentDB.insertStudent(fNameTextField.getText(), lNameTextField.getText(), Integer.parseInt(indexAddTextField.getText()), emailAddTextField.getText(), groupNum);
+            new View(true).updatePresenceData();//todo is it necessary?
         }
     }
 }

@@ -48,9 +48,9 @@ public class Controller implements ActionListener {
             Object[] groupToChose = Model.studentGroupData;
             int groupNum = Integer.parseInt((String) JOptionPane.showInputDialog(new JFrame(), "Please chose student group:", "Group number", JOptionPane.PLAIN_MESSAGE, null, groupToChose, "0"));
             System.out.println("Group number chosen: " + groupNum);
-            return groupNum;//todo return correct value from option pane
+            return groupNum;
         } else {
-            return Integer.parseInt((String) Model.studentGroupCombobox.getSelectedItem());//todo return correct value from View.groupComboBox
+            return Integer.parseInt((String) Model.studentGroupCombobox.getSelectedItem());
         }
     }
 }
