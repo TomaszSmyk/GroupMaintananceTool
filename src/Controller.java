@@ -7,7 +7,7 @@ public class Controller implements ActionListener {
     private JTextField fNameTextField;
     private JTextField lNameTextField;
     private JComboBox<String> groupComboBox;
-    private String groupNumberChosen = "";
+    private String groupNumberChosen = "";//todo do I use it?
 
 
     public Controller(JTextField fNameTextField, JTextField lNameTextField, JComboBox<String> groupComboBox) {
@@ -15,6 +15,9 @@ public class Controller implements ActionListener {
         this.lNameTextField = lNameTextField;
         this.groupComboBox = groupComboBox;
         updateStudentGroups();
+    }
+    public Controller() { //todo is it necessary?
+        //do nothing
     }
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
@@ -48,6 +51,7 @@ public class Controller implements ActionListener {
             Object[] groupToChose = Model.studentGroupData;
             int groupNum = Integer.parseInt((String) JOptionPane.showInputDialog(new JFrame(), "Please chose student group:", "Group number", JOptionPane.PLAIN_MESSAGE, null, groupToChose, "0"));
             System.out.println("Group number chosen: " + groupNum);
+//            new Controller().groupComboBox.setSelectedIndex(groupNum);
             return groupNum;
         } else {
             return Integer.parseInt((String) Model.studentGroupCombobox.getSelectedItem());

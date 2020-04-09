@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class View extends JFrame {
     private static final Dimension windowDimension = new Dimension(800,800);
@@ -10,11 +12,12 @@ public class View extends JFrame {
     private JButton logOutButton;
     private JButton addButton;
     private JTextField lNameTextField;
-    private JComboBox<String> groupComboBoxDelete;// todo change to jtextfield
+    private JComboBox<String> groupComboBoxDelete;// todo change to jtextfield, or rather delete it completly and use Controller's getGroupNumber method
     private JTextField indexAddTextField;
     private JTextField emailAddTextField;
     private JTable studentTable;
     private JLabel loginField;
+    private JPanel presenceTab;//todo set it to custom create and define behaviour/content/ in createUIComponents -> add checkboxes etc.
 
     public static String login = "";//todo insecure
 
@@ -39,6 +42,7 @@ public class View extends JFrame {
 
         Controller controllerActionListener = new Controller(fNameTextField, lNameTextField, groupComboBox);//todo refactor
 //        addButton.addActionListener(controllerActionListener);
+//        groupComboBox.setSelectedIndex(Controller.getGroupNumber());
         groupComboBox.addActionListener(controllerActionListener);
     }
 
@@ -70,13 +74,30 @@ public class View extends JFrame {
     }
 
     private void createUIComponents() {
+
         groupComboBox = Model.studentGroupCombobox;
+        //todo make it fill presence tab with students name, align it nicely -ish
     }
 
     public void updatePresenceData() {
         DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
         model.setRowCount(0);
-        studentTable.setModel(new Model().getStudentData());
+        studentTable.setModel(new Model().getStudentData(Controller.getGroupNumber()));
+        studentTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                boolean isPresent = false;
+                if(JOptionPane.showConfirmDialog(null, "Is student present", "Student Presence Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    isPresent = true;
+                } else {
+                    isPresent = false;
+                }
+                JTable sourceTable = (JTable) e.getSource();
+                int rowSelected = sourceTable.rowAtPoint(e.getPoint());
+//                int columnSelected = sourceTable.columnAtPoint(e.getPoint());
+                sourceTable.setValueAt(isPresent, rowSelected, 6);
+            }
+        });
     }
 
     public void setLogin(String login) {

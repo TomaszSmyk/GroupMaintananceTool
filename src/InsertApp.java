@@ -1,3 +1,4 @@
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 
@@ -64,6 +65,32 @@ public class InsertApp {
                 int groupID = rs.getInt("GroupID");
                 System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
                 model.addRow(new Object[]{id, fName, sName, index, email, groupID});
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return model;
+    }
+
+    public DefaultTableModel selectOneGroupStudentData(DefaultTableModel model, int groupNumber){
+        String sql = "SELECT * FROM Student WHERE GroupID = " + groupNumber;
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+
+            // loop through the result set
+            while (rs.next()) {
+
+                String id = rs.getString("StudentID");
+                String fName = rs.getString("StudentFirstName");
+                String sName = rs.getString("StudentSecondName");
+                int index = rs.getInt("StudentIndex");
+                String email = rs.getString("StudentEmail");
+                int groupID = rs.getInt("GroupID");
+                boolean isPresent = false;
+                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
+                model.addRow(new Object[]{id, fName, sName, index, email, groupID, isPresent});
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
