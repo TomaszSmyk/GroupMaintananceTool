@@ -79,7 +79,7 @@ public class View extends JFrame {
         //todo make it fill presence tab with students name, align it nicely -ish
     }
 
-    public void updatePresenceData() {
+    public void updatePresenceData() {//todo transfer this into another separate controller class
         DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
         model.setRowCount(0);
         studentTable.setModel(new Model().getStudentData(Controller.getGroupNumber()));
@@ -96,6 +96,11 @@ public class View extends JFrame {
                 int rowSelected = sourceTable.rowAtPoint(e.getPoint());
 //                int columnSelected = sourceTable.columnAtPoint(e.getPoint());
                 sourceTable.setValueAt(isPresent, rowSelected, 6);
+                int groupId = Integer.parseInt(sourceTable.getValueAt(rowSelected, 5).toString());
+                System.out.println("groupId: " + groupId);
+                int studentId = Integer.parseInt(sourceTable.getValueAt(rowSelected, 0).toString());
+                System.out.println("studentId: " + studentId);
+                new PresenceController(isPresent, groupId, studentId);
             }
         });
     }

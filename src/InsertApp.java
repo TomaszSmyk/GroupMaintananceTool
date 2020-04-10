@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.time.LocalDate;
 
 
 public class InsertApp {
@@ -41,6 +42,19 @@ public class InsertApp {
             pstmt.setInt(3, StudentIndex);
             pstmt.setString(4, StudentEmail);
             pstmt.setInt(5, GroupID);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void insertPresence(boolean isPresent, int groupId, int studentId) {
+        String sql = "INSERT INTO Presence (IsPresent, GroupID, StudentID) VALUES (?,?,?)";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBoolean(1, isPresent);
+            pstmt.setInt(2, groupId);
+            pstmt.setInt(3, studentId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -97,6 +111,25 @@ public class InsertApp {
         }
         return model;
     }
+
+//    public void updateStudent(int id, String name, double capacity) {
+//        String sql = "UPDATE Student SET name = ? , "
+//                + "capacity = ? "
+//                + "WHERE StudentID = ?";
+//
+//        try (Connection conn = this.connect();
+//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//
+//            // set the corresponding param
+//            pstmt.setString(1, name);
+//            pstmt.setDouble(2, capacity);
+//            pstmt.setInt(3, id);
+//            // update
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
     public static void main(String[] args) {
 //        try {
