@@ -1,14 +1,14 @@
-import javax.swing.*;
+package model;
+
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
-import java.time.LocalDate;
 
 
 public class InsertApp {
 
     private Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:src/College.db";
+        String url = "jdbc:sqlite:src/resources/College.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -61,6 +61,22 @@ public class InsertApp {
         }
     }
 
+//    private boolean wasStudentAlreadyInsertedToPresenceDatabaseToday() {//todo make it insert value only if it was not already inserted
+////        String sql = "SELECT Date, StudentID FROM Presence WHERE Date "
+//        try (Connection conn = this.connect();
+//             Statement stmt  = conn.createStatement();
+//             ResultSet rs    = stmt.executeQuery(sql)){
+//
+//            // loop through the result set
+//            while (rs.next()) {
+//
+//            }
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return false;
+//    }
+
     public DefaultTableModel selectAllStudentData(DefaultTableModel model){
         String sql = "SELECT * FROM Student";
 
@@ -84,6 +100,30 @@ public class InsertApp {
             System.out.println(e.getMessage());
         }
         return model;
+    }
+
+    public void selectAllStudentData(){
+        String sql = "SELECT * FROM Student";
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+
+            // loop through the result set
+            while (rs.next()) {
+
+                String id = rs.getString("StudentID");
+                String fName = rs.getString("StudentFirstName");
+                String sName = rs.getString("StudentSecondName");
+                int index = rs.getInt("StudentIndex");
+                String email = rs.getString("StudentEmail");
+                int groupID = rs.getInt("GroupID");
+                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public DefaultTableModel selectOneGroupStudentData(DefaultTableModel model, int groupNumber){
@@ -132,20 +172,34 @@ public class InsertApp {
 //    }
 
     public static void main(String[] args) {
-//        try {
-//            Class.forName("org.sqlite.JDBC");
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
         InsertApp app = new InsertApp();
         // insert three new rows
-        app.insert(1, "Piotr Kopniak", "Java");
-        app.insert(4, "Piotr Kopniak", "Java");
-        app.insert(5, "Piotr Kopniak", "Java");
-        app.insert(6, "Piotr Kopniak", "Java");
-        app.insert(7, "Piotr Kopniak", "Java");
-        app.insert(8, "Piotr Kopniak", "Java");
-        app.insert(10, "Piotr Kopniak", "Java");
-        app.insert(11, "Piotr Kopniak", "Java");
+//        app.insert(1, "Piotr Kopniak", "Java");
+//        app.insert(4, "Piotr Kopniak", "Java");
+//        app.insert(5, "Piotr Kopniak", "Java");
+//        app.insert(6, "Piotr Kopniak", "Java");
+//        app.insert(7, "Piotr Kopniak", "Java");
+//        app.insert(8, "Piotr Kopniak", "Java");
+//        app.insert(10, "Piotr Kopniak", "Java");
+//        app.insert(11, "Piotr Kopniak", "Java");
+
+//        app.insertStudent("A" , "A", 1, "A@A", 1);
+//        app.insertStudent("B" , "B", 2, "B@B", 1);
+//        app.insertStudent("C" , "C", 3, "C@C", 1);
+//        app.insertStudent("D" , "D", 4, "D@D", 1);
+//        app.insertStudent("E" , "E", 5, "E@E", 1);
+//        app.insertStudent("F" , "F", 6, "F@F", 1);
+//        app.insertStudent("G" , "G", 7, "G@G", 1);
+//        app.insertStudent("H" , "H", 8, "H@H", 1);
+//        app.insertStudent("I" , "I", 9, "I@I", 1);
+//        app.insertStudent("J" , "J", 10, "J@J", 1);
+//        app.insertStudent("K" , "K", 11, "K@K", 1);
+//        app.insertStudent("L" , "L", 12, "L@L", 1);
+//        app.insertStudent("M" , "M", 13, "M@M", 1);
+//        app.insertStudent("N" , "N", 14, "N@N", 1);
+//        app.insertStudent("O" , "O", 15, "O@O", 1);
+//        app.insertStudent("P" , "P", 16, "P@P", 1);
+
+        app.selectAllStudentData();
     }
 }

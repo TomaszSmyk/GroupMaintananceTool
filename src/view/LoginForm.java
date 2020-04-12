@@ -1,3 +1,5 @@
+package view;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,19 +12,32 @@ public class LoginForm extends JFrame {
     private JPasswordField passwordField;
     private JButton logInButton;
     private JPanel mainPane;
-    private static char[] correctPassword = {'a', 'b', 'c'};
-//    public String login; //todo make it more secure
+    private static final char[] CORRECT_PASSWORD = {'a', 'b', 'c'};
+    private final int WIDTH = 250;
+    private final int HEIGHT = 400;
+    private final boolean IS_RESIZABLE = false;
 
     public LoginForm() {
         LogInController logInController = new LogInController();
         passwordField.addActionListener(logInController);
         logInButton.addActionListener(logInController);
-        setSize(new Dimension(250, 450));
+        setSize(new Dimension(WIDTH, HEIGHT));
+        setResizable(IS_RESIZABLE);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(mainPane);
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    public static boolean isPasswordCorrect(char[] enteredPassword) {
+        boolean isCorrect;
+        if(enteredPassword.length != CORRECT_PASSWORD.length) {
+            isCorrect = false;
+        } else {
+            isCorrect = Arrays.equals(enteredPassword, CORRECT_PASSWORD);
+        }
+        return isCorrect;
     }
 
     private class LogInController implements ActionListener{ //todo check if login is correct, checks from database
@@ -32,7 +47,6 @@ public class LoginForm extends JFrame {
                 char[] enteredPassword = passwordField.getPassword();
                 if (isPasswordCorrect(enteredPassword)) {
                     View.login = loginField.getText();
-                    System.out.println("Log: " + View.login);
                     JOptionPane.showMessageDialog(new JFrame(), "Success");
                     new View();
                     dispose();
@@ -42,13 +56,10 @@ public class LoginForm extends JFrame {
             }
         }
     }
-    private static boolean isPasswordCorrect(char[] enteredPassword) {
-        boolean isCorrect;
-        if(enteredPassword.length != correctPassword.length) {
-            isCorrect = false;
-        } else {
-            isCorrect = Arrays.equals(enteredPassword, correctPassword);
-        }
-        return isCorrect;
+    public JTextField getLoginField() {
+        return loginField;
+    }
+    public JPasswordField getPasswordField() {
+        return passwordField;
     }
 }

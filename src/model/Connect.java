@@ -1,3 +1,5 @@
+package model;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,7 +11,7 @@ public class Connect {
         Connection conn = null;
         try {
             // db parameters
-            String url = "jdbc:sqlite:College.db";
+            String url = "jdbc:sqlite:/resources/College.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
 

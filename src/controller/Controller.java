@@ -1,3 +1,7 @@
+package controller;
+
+import model.Model;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,10 +33,10 @@ public class Controller implements ActionListener {
 
         }
 
-        if(compare.test(action, "groupNumberChanged")) {
+        if(compare.test(action, "groupNumberChanged")) {//todo for what is it here?
+
             JComboBox temp = (JComboBox) actionEvent.getSource();
-//            System.out.println(temp.getSelectedItem());
-//            System.out.println(temp.getSelectedItem() instanceof String);
+
             groupNumberChosen = (String) temp.getSelectedItem();
             //todo update presence
             //todo update add
@@ -46,12 +50,12 @@ public class Controller implements ActionListener {
             groupComboBox.addItem(element);
         }
     }
-    public static int getGroupNumber() {
+    public static int getGroupNumber() {//todo move it to Model class, refactor this
         if (Model.studentGroupCombobox.getSelectedItem() == null || Model.studentGroupCombobox.getSelectedItem().equals("SELECT")) {
             Object[] groupToChose = Model.studentGroupData;
             int groupNum = Integer.parseInt((String) JOptionPane.showInputDialog(new JFrame(), "Please chose student group:", "Group number", JOptionPane.PLAIN_MESSAGE, null, groupToChose, "0"));
             System.out.println("Group number chosen: " + groupNum);
-//            new Controller().groupComboBox.setSelectedIndex(groupNum);
+//            new controller.Controller().groupComboBox.setSelectedIndex(groupNum);
             return groupNum;
         } else {
             return Integer.parseInt((String) Model.studentGroupCombobox.getSelectedItem());

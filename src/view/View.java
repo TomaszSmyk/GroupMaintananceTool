@@ -1,10 +1,17 @@
+package view;
+
+import controller.AddController;
+import controller.Controller;
+import controller.PresenceController;
+import model.Model;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class View extends JFrame {
+public class View extends JFrame {//todo do not extend jframe
     private static final Dimension windowDimension = new Dimension(800,800);
     private JTabbedPane mainPane;
     public JComboBox<String> groupComboBox;
@@ -12,7 +19,7 @@ public class View extends JFrame {
     private JButton logOutButton;
     private JButton addButton;
     private JTextField lNameTextField;
-    private JComboBox<String> groupComboBoxDelete;// todo change to jtextfield, or rather delete it completly and use Controller's getGroupNumber method
+    private JComboBox<String> groupComboBoxDelete;// todo change to jtextfield, or rather delete it completly and use controller.Controller's getGroupNumber method
     private JTextField indexAddTextField;
     private JTextField emailAddTextField;
     private JTable studentTable;
@@ -22,13 +29,12 @@ public class View extends JFrame {
     public static String login = "";//todo insecure
 
     public View() {
-        setSize(windowDimension);
+        setSize(windowDimension);//todo unnecessary, let jframe do it by itself
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(mainPane);
         setLocationRelativeTo(null);
         setVisible(true);
         updatePresenceData();
-        System.out.println("Login: " + login);
         loginField.setText(login);
 
         logOutButton.addActionListener(actionEvent -> {
@@ -42,19 +48,13 @@ public class View extends JFrame {
 
         Controller controllerActionListener = new Controller(fNameTextField, lNameTextField, groupComboBox);//todo refactor
 //        addButton.addActionListener(controllerActionListener);
-//        groupComboBox.setSelectedIndex(Controller.getGroupNumber());
+//        groupComboBox.setSelectedIndex(controller.Controller.getGroupNumber());
         groupComboBox.addActionListener(controllerActionListener);
     }
 
     public View(boolean update) {//todo make sure it works with login, fe if u can still display logged person in home tab after updating, also, is there any way to make it smoother,
         //todo REFACTOR THIS __________IMPORTANT______________
-        dispose();
-        new View();
-    }
-
-    public View(String login) {
-        this.login = login;
-        new View();
+        refreshTable();
     }
 
 
@@ -77,6 +77,12 @@ public class View extends JFrame {
 
         groupComboBox = Model.studentGroupCombobox;
         //todo make it fill presence tab with students name, align it nicely -ish
+    }
+
+    public void refreshTable() {
+        DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
+        model.getDataVector().removeAllElements();
+        studentTable.setModel(new Model().getStudentData(Controller.getGroupNumber()));//todo change getgroup number
     }
 
     public void updatePresenceData() {//todo transfer this into another separate controller class
@@ -103,9 +109,5 @@ public class View extends JFrame {
                 new PresenceController(isPresent, groupId, studentId);
             }
         });
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 }
