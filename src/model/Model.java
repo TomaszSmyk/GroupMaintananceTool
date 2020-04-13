@@ -25,4 +25,8 @@ public class Model {
         return model;
     }
 
+    public void notifyStudentGroupComboBoxHasChanged(int selectedGroupNumber) {
+
+    }
+
 }

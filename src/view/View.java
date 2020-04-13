@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+//todo refactor this, separate minor classes that will get contentPane form this class(View)
 public class View extends JFrame {//todo do not extend jframe
     private static final Dimension windowDimension = new Dimension(800,800);
     private JTabbedPane mainPane;
@@ -28,6 +28,8 @@ public class View extends JFrame {//todo do not extend jframe
 
     public static String login = "";//todo insecure
 
+    private static Container contentPane;
+
     public View() {
         setSize(windowDimension);//todo unnecessary, let jframe do it by itself
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -36,6 +38,7 @@ public class View extends JFrame {//todo do not extend jframe
         setVisible(true);
         updatePresenceData();
         loginField.setText(login);
+        contentPane = mainPane.getRootPane();
 
         logOutButton.addActionListener(actionEvent -> {
             if (actionEvent.getActionCommand().equals("logout")){
@@ -50,11 +53,14 @@ public class View extends JFrame {//todo do not extend jframe
 //        addButton.addActionListener(controllerActionListener);
 //        groupComboBox.setSelectedIndex(controller.Controller.getGroupNumber());
         groupComboBox.addActionListener(controllerActionListener);
+        UISingleton a = UISingleton.getInstance();
+        JTable table = a.retrieveTable();
+        System.out.println("2: " + table);
     }
 
     public View(boolean update) {//todo make sure it works with login, fe if u can still display logged person in home tab after updating, also, is there any way to make it smoother,
         //todo REFACTOR THIS __________IMPORTANT______________
-        refreshTable();
+        refreshTable(Controller.getGroupNumber());
     }
 
 
@@ -62,6 +68,7 @@ public class View extends JFrame {//todo do not extend jframe
         SwingUtilities.invokeLater(() -> {
             try {
                 createAndShowGUI();
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -73,16 +80,24 @@ public class View extends JFrame {//todo do not extend jframe
 //        new View();
     }
 
+    protected static Container getUI() {
+        for (Component elem: contentPane.getComponents()) {
+            System.out.println("View: " + elem);
+        }
+        return contentPane;// todo make sure if this is correct way to retur contnetPane of the frame, and also refactor whole class to not inherit JFrame class, but use fram by composition
+    }
+
     private void createUIComponents() {
 
         groupComboBox = Model.studentGroupCombobox;
         //todo make it fill presence tab with students name, align it nicely -ish
     }
 
-    public void refreshTable() {
+    public void refreshTable(int groupNumber) {
+        System.out.println("1: " + studentTable);
         DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
         model.getDataVector().removeAllElements();
-        studentTable.setModel(new Model().getStudentData(Controller.getGroupNumber()));//todo change getgroup number
+        studentTable.setModel(new Model().getStudentData(groupNumber));//todo change getgroup number
     }
 
     public void updatePresenceData() {//todo transfer this into another separate controller class
@@ -110,4 +125,11 @@ public class View extends JFrame {//todo do not extend jframe
             }
         });
     }
+
+
+
+    public JTable getStudentTable() {
+        return studentTable;
+    }
+
 }
