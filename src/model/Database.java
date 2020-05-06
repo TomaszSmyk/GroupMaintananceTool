@@ -2,14 +2,16 @@ package model;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.LinkedList;
+import java.util.List;
 
 
-public class InsertApp {
+public class Database {
 
     private Connection connect() {
         // SQLite connection string
         String url = "jdbc:sqlite:src/resources/College.db";
-        Connection conn = null;
+        Connection conn = null;//todo make it singleton
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
@@ -18,48 +20,48 @@ public class InsertApp {
         return conn;
     }
 
-    public void insert(int groupNumber, String groupLeader, String groupSubject) {
-        String sql = "INSERT INTO 'Group'(GroupNumber, GroupLeader, GroupSubject) VALUES (?,?,?)";
+//    public void insert(int groupNumber, String groupLeader, String groupSubject) {
+//        String sql = "INSERT INTO 'Group'(GroupNumber, GroupLeader, GroupSubject) VALUES (?,?,?)";
+//
+//        try (Connection conn = this.connect();
+//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//            pstmt.setInt(1, groupNumber);
+//            pstmt.setString(2, groupLeader);
+//            pstmt.setString(3, groupSubject);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
+    public void insertStudent(String firstName, String lastName, int index, int group, String email) {
+        String sql = "INSERT INTO Student(firstName, lastName, 'index', 'group', email) VALUES (?,?,?,?,?)";
+        System.out.println(firstName + lastName + index + group + email);
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, groupNumber);
-            pstmt.setString(2, groupLeader);
-            pstmt.setString(3, groupSubject);
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setInt(3, index);
+            pstmt.setInt(4, group);
+            pstmt.setString(5, email);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void insertStudent(String StudentFirstName, String StudentSecondName, int StudentIndex, String StudentEmail, int GroupID) {
-        String sql = "INSERT INTO Student(StudentFirstName, StudentSecondName, StudentIndex, StudentEmail, GroupID) VALUES (?,?,?,?,?)";
-
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, StudentFirstName);
-            pstmt.setString(2, StudentSecondName);
-            pstmt.setInt(3, StudentIndex);
-            pstmt.setString(4, StudentEmail);
-            pstmt.setInt(5, GroupID);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    public void insertPresence(boolean isPresent, int groupId, int studentId) {
-        String sql = "INSERT INTO Presence (IsPresent, GroupID, StudentID) VALUES (?,?,?)";
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setBoolean(1, isPresent);
-            pstmt.setInt(2, groupId);
-            pstmt.setInt(3, studentId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+//    public void insertPresence(boolean isPresent, int groupId, int studentId) {
+//        String sql = "INSERT INTO Presence (IsPresent, GroupID, StudentID) VALUES (?,?,?)";
+//        try (Connection conn = this.connect();
+//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//            pstmt.setBoolean(1, isPresent);
+//            pstmt.setInt(2, groupId);
+//            pstmt.setInt(3, studentId);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//    }
 
 //    private boolean wasStudentAlreadyInsertedToPresenceDatabaseToday() {//todo make it insert value only if it was not already inserted
 ////        String sql = "SELECT Date, StudentID FROM Presence WHERE Date "
@@ -102,6 +104,34 @@ public class InsertApp {
         return model;
     }
 
+    protected List<Person> getAllStudents() {
+        List<Person> students = new LinkedList<>();
+
+        String sql = "SELECT * FROM Student";
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+
+            // loop through the result set
+            while (rs.next()) {
+                String id = rs.getString("StudentID");
+                String fName = rs.getString("firstName");
+                String lName = rs.getString("lastName");
+                int index = rs.getInt("index");
+                int groupNumber = rs.getInt("group");
+                String email = rs.getString("email");
+                System.out.println(id + " " + fName + " " + lName + index + groupNumber + " " + email);
+                Student student = new Student.Builder().ID(id).firstName(fName).lastName(lName).index(index).groupNumber(groupNumber).email(email).build();
+                students.add(student);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return students;
+    }
+
     public void selectAllStudentData(){
         String sql = "SELECT * FROM Student";
 
@@ -113,12 +143,12 @@ public class InsertApp {
             while (rs.next()) {
 
                 String id = rs.getString("StudentID");
-                String fName = rs.getString("StudentFirstName");
-                String sName = rs.getString("StudentSecondName");
-                int index = rs.getInt("StudentIndex");
-                String email = rs.getString("StudentEmail");
-                int groupID = rs.getInt("GroupID");
-                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
+                String fName = rs.getString("firstName");
+                String sName = rs.getString("lastName");
+                int index = rs.getInt("index");
+                int group = rs.getInt("group");
+                String email = rs.getString("email");
+                System.out.println(id + " " + fName + " " + sName + " " + index  + " " + group + " " + email);
 
             }
         } catch (SQLException e) {
@@ -127,7 +157,7 @@ public class InsertApp {
     }
 
     public DefaultTableModel selectOneGroupStudentData(DefaultTableModel model, int groupNumber){
-        String sql = "SELECT * FROM Student WHERE GroupID = " + groupNumber;
+        String sql = "SELECT * FROM Student WHERE 'group' = " + groupNumber;
 
         try (Connection conn = this.connect();
              Statement stmt  = conn.createStatement();
@@ -172,7 +202,7 @@ public class InsertApp {
 //    }
 
     public static void main(String[] args) {
-        InsertApp app = new InsertApp();
+        Database app = new Database();
         // insert three new rows
 //        app.insert(1, "Piotr Kopniak", "Java");
 //        app.insert(4, "Piotr Kopniak", "Java");
@@ -183,22 +213,22 @@ public class InsertApp {
 //        app.insert(10, "Piotr Kopniak", "Java");
 //        app.insert(11, "Piotr Kopniak", "Java");
 
-//        app.insertStudent("A" , "A", 1, "A@A", 1);
-//        app.insertStudent("B" , "B", 2, "B@B", 1);
-//        app.insertStudent("C" , "C", 3, "C@C", 1);
-//        app.insertStudent("D" , "D", 4, "D@D", 1);
-//        app.insertStudent("E" , "E", 5, "E@E", 1);
-//        app.insertStudent("F" , "F", 6, "F@F", 1);
-//        app.insertStudent("G" , "G", 7, "G@G", 1);
-//        app.insertStudent("H" , "H", 8, "H@H", 1);
-//        app.insertStudent("I" , "I", 9, "I@I", 1);
-//        app.insertStudent("J" , "J", 10, "J@J", 1);
-//        app.insertStudent("K" , "K", 11, "K@K", 1);
-//        app.insertStudent("L" , "L", 12, "L@L", 1);
-//        app.insertStudent("M" , "M", 13, "M@M", 1);
-//        app.insertStudent("N" , "N", 14, "N@N", 1);
-//        app.insertStudent("O" , "O", 15, "O@O", 1);
-//        app.insertStudent("P" , "P", 16, "P@P", 1);
+//        app.insertStudent("A" , "A", 1, 1,"A@A");
+//        app.insertStudent("B" , "B", 2, 1,"B@B");
+//        app.insertStudent("C" , "C", 3, 1,"C@C");
+//        app.insertStudent("D" , "D", 4, 1,"D@D");
+//        app.insertStudent("E" , "E", 5, 1,"E@E");
+//        app.insertStudent("F" , "F", 6, 2, "F@F");
+//        app.insertStudent("G" , "G", 7, 3,"G@G");
+//        app.insertStudent("H" , "H", 8, 4,"H@H");
+//        app.insertStudent("I" , "I", 9, 4,"I@I");
+//        app.insertStudent("J" , "J", 10, 4,"J@J");
+//        app.insertStudent("K" , "K", 11, 4,"K@K");
+//        app.insertStudent("L" , "L", 12, 4,"L@L");
+//        app.insertStudent("M" , "M", 13, 5,"M@M");
+//        app.insertStudent("N" , "N", 14, 5,"N@N");
+//        app.insertStudent("O" , "O", 15, 6,"O@O");
+//        app.insertStudent("P" , "P", 16, 6,"P@P");
 
         app.selectAllStudentData();
     }

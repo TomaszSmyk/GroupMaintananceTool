@@ -1,135 +1,185 @@
 package view;
 
-import controller.AddController;
 import controller.Controller;
-import controller.PresenceController;
 import model.Model;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-//todo refactor this, separate minor classes that will get contentPane form this class(View)
-public class View extends JFrame {//todo do not extend jframe
-    private static final Dimension windowDimension = new Dimension(800,800);
-    private JTabbedPane mainPane;
-    public JComboBox<String> groupComboBox;
-    private JTextField fNameTextField;
-    private JButton logOutButton;
-    private JButton addButton;
-    private JTextField lNameTextField;
-    private JComboBox<String> groupComboBoxDelete;// todo change to jtextfield, or rather delete it completly and use controller.Controller's getGroupNumber method
-    private JTextField indexAddTextField;
-    private JTextField emailAddTextField;
-    private JTable studentTable;
-    private JLabel loginField;
-    private JPanel presenceTab;//todo set it to custom create and define behaviour/content/ in createUIComponents -> add checkboxes etc.
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-    public static String login = "";//todo insecure
+import static view.BackgroundColor.COLOR;
 
-    private static Container contentPane;
+public class View {
+    private JFrame frame = new JFrame("APP");
+
+    private JPanel mainPanel = new CustomJPanel();
+    private JTabbedPane tabbedPane = new JTabbedPane();
+
+    private JPanel homePanel = new CustomJPanel();
+    private JLabel groupNumberLabel = new JLabel("Group number: ");
+    private JComboBox<Integer> groupNumbers;
+    private SortedSet<Integer> groups = new TreeSet<>();
+
+    private JPanel presencePanel = new CustomJPanel();
+    private static JTable presenceTable= new CustomJTable();
+
+
+    private JPanel addPanel = new CustomJPanel();
+    private JLabel addFirstNameLabel = new JLabel("First name:");
+    public static JTextField addFirstNameTextField = new JTextField();
+    private JLabel addLastNameLabel = new JLabel("Last name:");
+    public static JTextField addLastNameTextField = new JTextField();
+    private JLabel addIndexLabel = new JLabel("Index:");
+    public static JTextField addIndexTextField = new JTextField();
+    private JLabel addGroupLabel = new JLabel("Group:");
+    public static JTextField addGroupTextField = new JTextField();
+    private JLabel addEmailLabel = new JLabel("Email:");
+    public static JTextField addEmailTextField = new JTextField();
+
+    private JButton addButton = new JButton("ADD");
+
+    private JPanel deletePanel = new CustomJPanel();
+
+    private JPanel chartsPanel = new CustomJPanel();
+
+    protected static final Dimension widowSize = new Dimension(1000, 700);
+
 
     public View() {
-        setSize(windowDimension);//todo unnecessary, let jframe do it by itself
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        add(mainPane);
-        setLocationRelativeTo(null);
-        setVisible(true);
-        updatePresenceData();
-        loginField.setText(login);
-        contentPane = mainPane.getRootPane();
+        Model model = new Model();
+        groups = model.updateGroupNumbers();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setPreferredSize(widowSize);
+        frame.setResizable(false);
 
-        logOutButton.addActionListener(actionEvent -> {
-            if (actionEvent.getActionCommand().equals("logout")){
-                dispose();
-                new LoginForm();
-            }
-        });
+        mainPanel.setLayout(new BorderLayout());
 
-        addButton.addActionListener(new AddController(fNameTextField, lNameTextField, indexAddTextField, emailAddTextField));//todo refactor
+        tabbedPane.setUI(new CustomTabbedPaneUI());
 
-        Controller controllerActionListener = new Controller(fNameTextField, lNameTextField, groupComboBox);//todo refactor
-//        addButton.addActionListener(controllerActionListener);
-//        groupComboBox.setSelectedIndex(controller.Controller.getGroupNumber());
-        groupComboBox.addActionListener(controllerActionListener);
-        UISingleton a = UISingleton.getInstance();
-        JTable table = a.retrieveTable();
-        System.out.println("2: " + table);
+        setupHomeTab();
+        setupPresenceTab();
+        setupAddTab();
+        setupDeleteTab();
+        setupChartsTab();
+
+        tabbedPane.setTabPlacement(JTabbedPane.LEFT);
+
+        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+
+        setupListeners();
+
+        frame.getContentPane().add(mainPanel);
+
+
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
-    public View(boolean update) {//todo make sure it works with login, fe if u can still display logged person in home tab after updating, also, is there any way to make it smoother,
-        //todo REFACTOR THIS __________IMPORTANT______________
-        refreshTable(Controller.getGroupNumber());
+    private void setupHomeTab() {
+        homePanel.setLayout(new FlowLayout());
+        homePanel.add(groupNumberLabel);
+        groupNumbers = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(groups.toArray(new Integer[0])));
+        groupNumbers.setActionCommand(Command.GROUP_NUMBER_CHANGED.toString());
+        groupNumbers.addActionListener(new Controller());
+        homePanel.add(groupNumbers);
+
+        tabbedPane.add(Command.HOME.toString(), homePanel);
     }
 
+    private void setupPresenceTab() {
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                createAndShowGUI();
 
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
+        presencePanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        //todo set background of table to gradient
+        presencePanel.add(presenceTable, gbc);
+
+        tabbedPane.add(Command.PRESENCE.toString(), presencePanel);
     }
 
-    private static void createAndShowGUI() throws Exception{
-        new LoginForm();
-//        new View();
+    private void setupAddTab() {
+        addPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 1;
+        gbc.weightx = 1;
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        addFirstNameLabel.setHorizontalAlignment(JLabel.RIGHT);
+        addPanel.add(addFirstNameLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        addPanel.add(addFirstNameTextField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        addLastNameLabel.setHorizontalAlignment(JLabel.RIGHT);
+        addPanel.add(addLastNameLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        addPanel.add(addLastNameTextField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        addIndexLabel.setHorizontalAlignment(JLabel.RIGHT);
+        addPanel.add(addIndexLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        addPanel.add(addIndexTextField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        addGroupLabel.setHorizontalAlignment(JLabel.RIGHT);
+        addPanel.add(addGroupLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 3;
+        addPanel.add(addGroupTextField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        addEmailLabel.setHorizontalAlignment(JLabel.RIGHT);
+        addPanel.add(addEmailLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 4;
+        addPanel.add(addEmailTextField, gbc);
+
+        gbc.gridx = 3;
+        gbc.gridy = 5;
+        addPanel.add(addButton, gbc);
+
+        tabbedPane.add(Command.ADD.toString(), addPanel);
+    }
+    private void setupDeleteTab() {
+        tabbedPane.add(Command.DELETE.toString(), deletePanel);
     }
 
-    protected static Container getUI() {
-        for (Component elem: contentPane.getComponents()) {
-            System.out.println("View: " + elem);
-        }
-        return contentPane;// todo make sure if this is correct way to retur contnetPane of the frame, and also refactor whole class to not inherit JFrame class, but use fram by composition
+    private void setupChartsTab() {
+        tabbedPane.add(Command.CHARTS.toString(), chartsPanel);
     }
 
-    private void createUIComponents() {
-
-        groupComboBox = Model.studentGroupCombobox;
-        //todo make it fill presence tab with students name, align it nicely -ish
+    private void setupListeners() {
+        Controller controller = new Controller();
+        this.addButton.setActionCommand(Command.ADD.toString());
+        this.addButton.addActionListener(controller);
     }
 
-    public void refreshTable(int groupNumber) {
-        System.out.println("1: " + studentTable);
-        DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
-        model.getDataVector().removeAllElements();
-        studentTable.setModel(new Model().getStudentData(groupNumber));//todo change getgroup number
+    public static void createAndShowUI() {
+        new View();
     }
 
-    public void updatePresenceData() {//todo transfer this into another separate controller class
-        DefaultTableModel model = (DefaultTableModel) studentTable.getModel();
-        model.setRowCount(0);
-        studentTable.setModel(new Model().getStudentData(Controller.getGroupNumber()));
-        studentTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                boolean isPresent = false;
-                if(JOptionPane.showConfirmDialog(null, "Is student present", "Student Presence Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    isPresent = true;
-                } else {
-                    isPresent = false;
-                }
-                JTable sourceTable = (JTable) e.getSource();
-                int rowSelected = sourceTable.rowAtPoint(e.getPoint());
-//                int columnSelected = sourceTable.columnAtPoint(e.getPoint());
-                sourceTable.setValueAt(isPresent, rowSelected, 6);
-                int groupId = Integer.parseInt(sourceTable.getValueAt(rowSelected, 5).toString());
-                System.out.println("groupId: " + groupId);
-                int studentId = Integer.parseInt(sourceTable.getValueAt(rowSelected, 0).toString());
-                System.out.println("studentId: " + studentId);
-                new PresenceController(isPresent, groupId, studentId);
-            }
-        });
-    }
-
-
-
-    public JTable getStudentTable() {
-        return studentTable;
+    public static JTable getPresenceTable() {
+        return presenceTable;
     }
 
 }
