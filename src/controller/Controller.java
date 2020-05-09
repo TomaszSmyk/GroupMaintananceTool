@@ -22,7 +22,7 @@ public class Controller implements ActionListener {
         Controller controller = new Controller();
         if(action.equals(Command.ADD.toString())){
             System.out.println("ADDING");
-            String fName = View.addFirstNameTextField.getText();//todo LAST CHANGES
+            String fName = View.addFirstNameTextField.getText();
             String lName = View.addLastNameTextField.getText();
             int index = Integer.parseInt(View.addIndexTextField.getText());
             int groupNumber = Integer.parseInt(View.addGroupTextField.getText());

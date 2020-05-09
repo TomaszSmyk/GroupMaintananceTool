@@ -1,6 +1,7 @@
 package view;
 
 import controller.Controller;
+import controller.TableController;
 import model.Model;
 
 import javax.swing.*;
@@ -97,6 +98,8 @@ public class View {
         gbc.weightx = 1;
         gbc.weighty = 1;
         //todo set background of table to gradient
+        //todo add table to scrollable pane to prevent window from cutting of bottom of the table
+        presenceTable.addMouseListener(new TableController());
         presencePanel.add(presenceTable, gbc);
 
         tabbedPane.add(Command.PRESENCE.toString(), presencePanel);
