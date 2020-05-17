@@ -1,5 +1,3 @@
-import view.View;
-
 import javax.swing.*;
 
 public class Application {
@@ -13,3 +11,5 @@ public class Application {
         });
     }
 }
+
+//todo make rows that was selected green

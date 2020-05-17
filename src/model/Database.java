@@ -1,7 +1,7 @@
 package model;
 
-import javax.swing.table.DefaultTableModel;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,18 +50,36 @@ public class Database {
         }
     }
 
-//    public void insertPresence(boolean isPresent, int groupId, int studentId) {
-//        String sql = "INSERT INTO Presence (IsPresent, GroupID, StudentID) VALUES (?,?,?)";
-//        try (Connection conn = this.connect();
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//            pstmt.setBoolean(1, isPresent);
-//            pstmt.setInt(2, groupId);
-//            pstmt.setInt(3, studentId);
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-//            System.out.println(e.getMessage());
-//        }
-//    }
+    public void insertPresence(int studentId, boolean isPresent) {
+        String sql = "INSERT INTO Presence (StudentID, Date, LessonNumber, IsPresent) VALUES (?, ?, ?, ?)";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, studentId);
+            pstmt.setString(2, Model.getCurrentDate());
+            pstmt.setInt(3, Model.lessonNumber);
+            pstmt.setBoolean(4, isPresent);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    public void updatePresence(boolean isPresent, int studentId) {
+
+
+        String sql = "UPDATE Presence SET IsPresent = ? WHERE (Date = ? AND StudentID = ?)";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setBoolean(1, isPresent);
+            pstmt.setString(2, Model.getCurrentDate());
+            pstmt.setInt(3, studentId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
 //    private boolean wasStudentAlreadyInsertedToPresenceDatabaseToday() {//todo make it insert value only if it was not already inserted
 ////        String sql = "SELECT Date, StudentID FROM Presence WHERE Date "
@@ -78,31 +96,31 @@ public class Database {
 //        }
 //        return false;
 //    }
-
-    public DefaultTableModel selectAllStudentData(DefaultTableModel model){
-        String sql = "SELECT * FROM Student";
-
-        try (Connection conn = this.connect();
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
-
-            // loop through the result set
-            while (rs.next()) {
-
-                String id = rs.getString("StudentID");
-                String fName = rs.getString("StudentFirstName");
-                String sName = rs.getString("StudentSecondName");
-                int index = rs.getInt("StudentIndex");
-                String email = rs.getString("StudentEmail");
-                int groupID = rs.getInt("GroupID");
-                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
-                model.addRow(new Object[]{id, fName, sName, index, email, groupID});
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return model;
-    }
+//
+//    public DefaultTableModel selectAllStudentData(DefaultTableModel model){
+//        String sql = "SELECT * FROM Student";
+//
+//        try (Connection conn = this.connect();
+//             Statement stmt  = conn.createStatement();
+//             ResultSet rs    = stmt.executeQuery(sql)){
+//
+//            // loop through the result set
+//            while (rs.next()) {
+//
+//                String id = rs.getString("StudentID");
+//                String fName = rs.getString("StudentFirstName");
+//                String sName = rs.getString("StudentSecondName");
+//                int index = rs.getInt("StudentIndex");
+//                String email = rs.getString("StudentEmail");
+//                int groupID = rs.getInt("GroupID");
+//                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
+//                model.addRow(new Object[]{id, fName, sName, index, email, groupID});
+//            }
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return model;
+//    }
 
     protected List<Person> getAllStudents() {
         List<Person> students = new LinkedList<>();
@@ -156,8 +174,10 @@ public class Database {
         }
     }
 
-    public DefaultTableModel selectOneGroupStudentData(DefaultTableModel model, int groupNumber){
-        String sql = "SELECT * FROM Student WHERE 'group' = " + groupNumber;
+    private ArrayList<Integer> getPresenceData(int studentId) {
+        ArrayList<Integer> ids = new ArrayList<>();
+        String d = Model.getCurrentDate();
+        String sql = "SELECT * FROM Presence WHERE Date =" + d;
 
         try (Connection conn = this.connect();
              Statement stmt  = conn.createStatement();
@@ -166,21 +186,94 @@ public class Database {
             // loop through the result set
             while (rs.next()) {
 
-                String id = rs.getString("StudentID");
-                String fName = rs.getString("StudentFirstName");
-                String sName = rs.getString("StudentSecondName");
-                int index = rs.getInt("StudentIndex");
-                String email = rs.getString("StudentEmail");
-                int groupID = rs.getInt("GroupID");
-                boolean isPresent = false;
-                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
-                model.addRow(new Object[]{id, fName, sName, index, email, groupID, isPresent});
+                int id = rs.getInt("PresenceID");
+                String sId = rs.getString("StudentID");
+                String date = rs.getString("Date");
+                boolean isPresent = rs.getBoolean("IsPresent");
+                System.out.println(id + " " + sId + " " + date + " " + isPresent);
+
+                ids.add(id);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return model;
+        return ids;
     }
+    public boolean isStudentIDInDatabase(int studentID) {
+        String sql = "SELECT StudentID FROM Presence WHERE StudentID=" + studentID;
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            // loop through the result set
+            while (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean isDateInDatabase(String date) {
+        String sql = "SELECT Date FROM Presence WHERE (Date=" + date + ")";
+        System.out.println("sql: " + sql);
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            // loop through the result set
+            while (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean isLessonNumberInDatabase(int lessonNumber) {
+        String sql = "SELECT LessonNumber FROM Presence WHERE LessonNumber=" + lessonNumber;
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            // loop through the result set
+            while (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+//
+//    public DefaultTableModel selectOneGroupStudentData(DefaultTableModel model, int groupNumber){
+//        String sql = "SELECT * FROM Student WHERE 'group' = " + groupNumber;
+//
+//        try (Connection conn = this.connect();
+//             Statement stmt  = conn.createStatement();
+//             ResultSet rs    = stmt.executeQuery(sql)){
+//
+//            // loop through the result set
+//            while (rs.next()) {
+//
+//                String id = rs.getString("StudentID");
+//                String fName = rs.getString("StudentFirstName");
+//                String sName = rs.getString("StudentSecondName");
+//                int index = rs.getInt("StudentIndex");
+//                String email = rs.getString("StudentEmail");
+//                int groupID = rs.getInt("GroupID");
+//                boolean isPresent = false;
+//                System.out.println(id + " " + fName + " " + sName + index  + " " + email + " " + groupID);
+//                model.addRow(new Object[]{id, fName, sName, index, email, groupID, isPresent});
+//            }
+//        } catch (SQLException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return model;
+//    }
 
 //    public void updateStudent(int id, String name, double capacity) {
 //        String sql = "UPDATE Student SET name = ? , "
@@ -230,6 +323,7 @@ public class Database {
 //        app.insertStudent("O" , "O", 15, 6,"O@O");
 //        app.insertStudent("P" , "P", 16, 6,"P@P");
 
-        app.selectAllStudentData();
+//        app.selectAllStudentData();
+//        app.getPresenceData( 6);
     }
 }

@@ -3,7 +3,6 @@ package controller;
 
 import model.Database;
 import model.Model;
-import model.Person;
 import model.Student;
 import view.Command;
 import view.View;
@@ -38,6 +37,11 @@ public class Controller implements ActionListener {
             JComboBox<Integer> jcb = (JComboBox)actionEvent.getSource();
             groupSelected = (Integer)jcb.getSelectedItem();
             new Model(groupSelected);
+        }
+        else if (action.equals(Command.WEEK_NUMBER_CHANGED.toString())) {
+            JComboBox<Integer> jcb = (JComboBox)actionEvent.getSource();
+            System.out.println("Week number:" + jcb.getSelectedItem());
+            Model.lessonNumber = (Integer)jcb.getSelectedItem();
         }
     }
     private void notifyStudentAdded() {

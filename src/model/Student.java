@@ -16,7 +16,7 @@ public class Student implements Person {
         private int groupNumber = 0;
         private int index = 0;
         private String email = "";
-        private boolean isPresent = false;
+        private boolean isPresent = true;
 
         public Builder ID(String ID) {
             this.ID = ID;
@@ -57,6 +57,7 @@ public class Student implements Person {
         groupNumber = builder.groupNumber;
         index = builder.index;
         email = builder.email;
+        isPresent = builder.isPresent;
     }
 
     @Override

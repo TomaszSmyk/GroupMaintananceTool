@@ -13,6 +13,8 @@ public enum BackgroundColor {
     protected final Color base;
     protected final Point beginPoint;
     protected final Point endPoint;
+    protected final Color greenRow;
+    protected final Color redRow;
 
 
     BackgroundColor() {
@@ -23,5 +25,7 @@ public enum BackgroundColor {
         base = new Color(79, 97, 255, 255);
         beginPoint = new Point(50 ,500);
         endPoint = new Point(100 ,100);
+        greenRow = Color.green;
+        redRow = Color.red;
     }
 }

@@ -1,15 +1,13 @@
 package view;
 
 import controller.Controller;
+import controller.TabController;
 import controller.TableController;
 import model.Model;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.SortedSet;
-import java.util.TreeSet;
-
-import static view.BackgroundColor.COLOR;
 
 public class View {
     private JFrame frame = new JFrame("APP");
@@ -20,7 +18,25 @@ public class View {
     private JPanel homePanel = new CustomJPanel();
     private JLabel groupNumberLabel = new JLabel("Group number: ");
     private JComboBox<Integer> groupNumbers;
-    private SortedSet<Integer> groups = new TreeSet<>();
+    private SortedSet<Integer> groups;
+    private JLabel lessonNumberLabel = new JLabel("Lesson number");
+    private Integer[] lesson = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
+    private JComboBox<Integer> lessonNumbers = new JComboBox<>(lesson);
+
+
+    /**
+     * This is I want to implement in the home section
+     * -week number (1-15)
+     * -day of the week
+     * -hour that classes take place
+     * -who is the lecturer - further implementation to the login/register screen
+     *
+     * The date that I want to write into the database need to be in DD:MM:YYYY HH format. No need to add hours.
+     * Year will be extracted from DateTimeFormatter
+     *         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy");
+     *         LocalDateTime now = LocalDateTime.now();
+     *         System.out.println(dtf.format(now));
+     */
 
     private JPanel presencePanel = new CustomJPanel();
     private static JTable presenceTable= new CustomJTable();
@@ -57,6 +73,7 @@ public class View {
         mainPanel.setLayout(new BorderLayout());
 
         tabbedPane.setUI(new CustomTabbedPaneUI());
+        tabbedPane.addMouseListener(new TabController());
 
         setupHomeTab();
         setupPresenceTab();
@@ -80,11 +97,17 @@ public class View {
 
     private void setupHomeTab() {
         homePanel.setLayout(new FlowLayout());
+
         homePanel.add(groupNumberLabel);
         groupNumbers = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(groups.toArray(new Integer[0])));
         groupNumbers.setActionCommand(Command.GROUP_NUMBER_CHANGED.toString());
         groupNumbers.addActionListener(new Controller());
         homePanel.add(groupNumbers);
+
+        homePanel.add(lessonNumberLabel);
+        lessonNumbers.setActionCommand(Command.WEEK_NUMBER_CHANGED.toString());
+        lessonNumbers.addActionListener(new Controller());
+        homePanel.add(lessonNumbers);
 
         tabbedPane.add(Command.HOME.toString(), homePanel);
     }

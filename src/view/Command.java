@@ -6,5 +6,6 @@ public enum Command {
     ADD,
     DELETE,
     CHARTS,
-    GROUP_NUMBER_CHANGED
+    GROUP_NUMBER_CHANGED,
+    WEEK_NUMBER_CHANGED
 }

@@ -1,5 +1,7 @@
 package controller;
 
+import model.Model;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,6 +18,11 @@ public class TableController extends MouseAdapter {
         JTable sourceTable = (JTable) e.getSource();
         int rowSelected = sourceTable.rowAtPoint(e.getPoint());
         sourceTable.setValueAt(isPresent, rowSelected, 6);
+        //todo make it write that presence data to the student
+        int id = Integer.parseInt((String) sourceTable.getValueAt(rowSelected, 0));
+        Model.changeStudentPresence(id, isPresent);
+
         //todo make it write that presence data to the database
+
     }
 }
