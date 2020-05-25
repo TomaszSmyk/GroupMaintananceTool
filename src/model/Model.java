@@ -61,15 +61,19 @@ public class Model {
 //                database.insertPresence(Integer.parseInt(student.getID()), student.getPresence());
 //                database.updatePresence(student.getPresence(), Integer.parseInt(student.getID()));
 //                System.out.println("def: " + database.isStudentIDInDatabase(7));
-                System.out.println(Model.getCurrentDate());
-                System.out.println(database.isStudentIDInDatabase(1));
-                System.out.println(database.isDateInDatabase(Model.getCurrentDate()));
-                System.out.println(database.isLessonNumberInDatabase(lessonNumber));
-                if (database.isStudentIDInDatabase(1) && database.isDateInDatabase(Model.getCurrentDate()) && database.isLessonNumberInDatabase(lessonNumber)) {
+                System.out.println("Data: " + Model.getCurrentDate());
+                System.out.println("Is student in DB: " + database.isStudentIDInDatabase(Integer.parseInt(student.getID())));
+                System.out.println("Is current date in DB: " + database.isDateInDatabase(Model.getCurrentDate()));
+                System.out.println("Is lesson " + lessonNumber + " in DB: " + database.isLessonNumberInDatabase(lessonNumber));
+                boolean abc = database.isStudentIDInDatabase(1) && database.isDateInDatabase(Model.getCurrentDate()) && database.isLessonNumberInDatabase(lessonNumber);
+                System.out.println("If: " + abc);
+                if (database.isDateInDatabase(Model.getCurrentDate()) && database.isLessonNumberInDatabase(lessonNumber)) {
                     //todo here will be code to update database, cause such row already exists
+                    database.updatePresence(student.getPresence(), Integer.parseInt(student.getID()));
                 }
                 else {
                     //todo and here will be just insert into database, cause such record is not present in db
+                    database.insertPresence(Integer.parseInt(student.getID()), student.getPresence());
                 }
             }
         }

@@ -1,10 +1,12 @@
 package model;
 
+
+
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 
 public class Database {
 
@@ -14,10 +16,55 @@ public class Database {
         Connection conn = null;//todo make it singleton
         try {
             conn = DriverManager.getConnection(url);
+//            this.createStudent();
+//            this.createPresence();
+        } catch (SQLException e) {
+            //todo create tables if missing and maybe fill them with data
+            System.out.println(e.getMessage());
+//            this.createStudent();
+//            this.createPresence();
+//            SwingUtilities.invokeLater(() -> {
+//                try {
+//                    view.View.createAndShowUI();
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//            });
+        }
+        return conn;
+    }
+
+    private void createStudent() {
+        String sql = "CREATE TABLE IF NOT EXISTS Student(\n"
+                + "	id integer PRIMARY KEY,\n"
+                + "	firstName text NOT NULL,\n"
+                + "	'index' integer NOT NULL,\n"
+                + "	'group' integer NOT NULL,\n"
+                + "	email text NOT NULL\n"
+                + ");";
+
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeQuery(sql);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return conn;
+    }
+    private void createPresence() {
+        String sql = "CREATE TABLE IF NOT EXISTS Presence(\n"
+                + "	id integer PRIMARY KEY,\n"
+                + "	StudentID integer NOT NULL,\n"
+                + "	Date text NOT NULL,\n"
+                + "	LessonNumber integer NOT NULL,\n"
+                + "	IsPresent interger CHECK (IsPresent IN (0, 1)) NOT NULL\n"
+                + ");";
+
+        try (Connection conn = this.connect();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeQuery(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 //    public void insert(int groupNumber, String groupLeader, String groupSubject) {
@@ -199,6 +246,8 @@ public class Database {
         }
         return ids;
     }
+
+
     public boolean isStudentIDInDatabase(int studentID) {
         String sql = "SELECT StudentID FROM Presence WHERE StudentID=" + studentID;
 

@@ -25,7 +25,7 @@ public class View {
 
 
     /**
-     * This is I want to implement in the home section
+     * This is what I want to implement in the home section
      * -week number (1-15)
      * -day of the week
      * -hour that classes take place

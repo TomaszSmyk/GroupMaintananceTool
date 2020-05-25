@@ -10,7 +10,7 @@ public class CustomTabbedPaneUI extends BasicTabbedPaneUI {
     private final int barHeight = 40;
 
 //    private final int tabDesiredHeight = (700 - barHeight)/5;//todo provide size from outer class
-    private final int tabDesiredHeight = (View.widowSize.height - 6)/5;
+    private final int tabDesiredHeight = (View.widowSize.height - 6)/5 - 10;
     private final int tabDesiredWidth = View.widowSize.width/5;
 
     @Override
