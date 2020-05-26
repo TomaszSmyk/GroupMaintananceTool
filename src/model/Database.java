@@ -99,13 +99,14 @@ public class Database {
         }
     }
 
-    public void insertPresence(int studentId, boolean isPresent) {
+    public void insertPresence(int studentId, boolean isPresent, int lessonNumber) {
         String sql = "INSERT INTO Presence (StudentID, Date, LessonNumber, IsPresent) VALUES (?, ?, ?, ?)";
+        System.out.println("Insert presence: present: " + isPresent + " id: " + studentId + " ln: " + lessonNumber);
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, studentId);
             pstmt.setString(2, Model.getCurrentDate());
-            pstmt.setInt(3, Model.lessonNumber);
+            pstmt.setInt(3, lessonNumber);
             pstmt.setBoolean(4, isPresent);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -118,6 +119,7 @@ public class Database {
 
 
         String sql = "UPDATE Presence SET IsPresent = ? WHERE (LessonNumber = ? AND StudentID = ?)";
+        System.out.println("Update presence: " + isPresent + studentId + " ln: " + lessonNumber);
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBoolean(1, isPresent);
@@ -291,8 +293,9 @@ public class Database {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                System.out.println("ABCDEFGHIJKLMNOP: " + rs.getBoolean("IsPresent"));
-                return rs.getBoolean("IsPresent"); //returns true when executed statement selected student
+                boolean p = rs.getBoolean("IsPresent");
+                System.out.println("ID: " + ID + " LN: " + lessonNumber + " is: " + p);
+                return p; //returns true when executed statement selected student
             }
         } catch (SQLException e) {
             e.printStackTrace();

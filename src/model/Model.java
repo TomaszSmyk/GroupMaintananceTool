@@ -44,6 +44,7 @@ public class Model {
         for(Person student: students) {
             //todo make it check in Presence DB if student is already in there and update student presence if so.
             if (database.isStudentPresenceInDatabaseOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber)) {
+                System.out.println("List student: " + database.getStudentPresenceOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber));
                 student.setPresence(database.getStudentPresenceOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber));
             } else {
                 student.setPresence(true);
@@ -68,23 +69,24 @@ public class Model {
         Database database = new Database();
         for (Person student : students) {
             if (student.getGroupNumber() == activeGroup) {
-                System.out.println("Inserting to presence tab:  " + Integer.parseInt(student.getID()) + " " + student.getPresence());
+                System.out.println("Inserting to presence tab:  ID: " + Integer.parseInt(student.getID()) + " Present: " + student.getPresence());
 //                database.insertPresence(Integer.parseInt(student.getID()), student.getPresence());
 //                database.updatePresence(student.getPresence(), Integer.parseInt(student.getID()));
 //                System.out.println("def: " + database.isStudentIDInDatabase(7));
-                System.out.println("Data: " + Model.getCurrentDate());
+//                System.out.println("Data: " + Model.getCurrentDate());
                 System.out.println("Is student in DB: " + database.isStudentIDInDatabase(Integer.parseInt(student.getID())));
-                System.out.println("Is current date in DB: " + database.isDateInDatabase(Model.getCurrentDate()));
+//                System.out.println("Is current date in DB: " + database.isDateInDatabase(Model.getCurrentDate()));
                 System.out.println("Is lesson " + lessonNumber + " in DB: " + database.isLessonNumberInDatabase(lessonNumber));
                 boolean abc = database.isStudentPresenceInDatabaseOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber);
                 System.out.println("If: " + abc);
                 if (database.isStudentPresenceInDatabaseOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber)) {
                     //todo here will be code to update database, cause such row already exists
-                    database.updatePresence(student.getPresence(), Model.lessonNumber,Integer.parseInt(student.getID()));
+                    System.out.println(student.getPresence() + " " + Model.lessonNumber + " " + Integer.parseInt(student.getID()));
+                    database.updatePresence(student.getPresence(), Integer.parseInt(student.getID()), Model.lessonNumber);
                 }
                 else {
                     //todo and here will be just insert into database, cause such record is not present in db
-                    database.insertPresence(Integer.parseInt(student.getID()), student.getPresence());
+                    database.insertPresence(Integer.parseInt(student.getID()), student.getPresence(), Model.lessonNumber);
                 }
             }
         }
