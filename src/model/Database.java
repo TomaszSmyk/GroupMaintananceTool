@@ -2,7 +2,9 @@ package model;
 
 
 
+import javax.print.attribute.standard.PresentationDirection;
 import javax.swing.*;
+import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -112,14 +114,14 @@ public class Database {
     }
 
 
-    public void updatePresence(boolean isPresent, int studentId) {
+    public void updatePresence(boolean isPresent, int studentId, int lessonNumber) {
 
 
-        String sql = "UPDATE Presence SET IsPresent = ? WHERE (Date = ? AND StudentID = ?)";
+        String sql = "UPDATE Presence SET IsPresent = ? WHERE (LessonNumber = ? AND StudentID = ?)";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBoolean(1, isPresent);
-            pstmt.setString(2, Model.getCurrentDate());
+            pstmt.setInt(2, lessonNumber);
             pstmt.setInt(3, studentId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -197,6 +199,37 @@ public class Database {
         return students;
     }
 
+    protected List<Person> getStudentsFromGroup(int groupNumber) {
+        List<Person> students = new LinkedList<>();
+
+        String sql = "SELECT * FROM Student WHERE ('group' = ?)";
+
+        try (Connection conn = this.connect();
+            PreparedStatement stmt = conn.prepareStatement(sql);) {
+
+            stmt.setInt(1, groupNumber);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String id = rs.getString("StudentID");
+                String fName = rs.getString("firstName");
+                String lName = rs.getString("lastName");
+                int index = rs.getInt("index");
+                int group = rs.getInt("group");
+                String email = rs.getString("email");
+                System.out.println(id + " " + fName + " " + lName + index + group + " " + email);
+                Student student = new Student.Builder().ID(id).firstName(fName).lastName(lName).index(index).groupNumber(group).email(email).build();
+                students.add(student);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+        return students;
+    }
+
     public void selectAllStudentData(){
         String sql = "SELECT * FROM Student";
 
@@ -245,6 +278,45 @@ public class Database {
             System.out.println(e.getMessage());
         }
         return ids;
+    }
+
+    public boolean getStudentPresenceOnLessonNumber(int ID, int lessonNumber) {
+        String sql = "SELECT IsPresent FROM Presence WHERE (StudentID = ? AND LessonNumber = ?)";
+
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, ID);
+            pstmt.setInt(2, lessonNumber);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                System.out.println("ABCDEFGHIJKLMNOP: " + rs.getBoolean("IsPresent"));
+                return rs.getBoolean("IsPresent"); //returns true when executed statement selected student
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true; //returns false when there was no content in query
+    }
+
+    public boolean isStudentPresenceInDatabaseOnLessonNumber(int ID, int lessonNumber) {
+        String sql = "SELECT * FROM Presence WHERE (StudentID = ? AND LessonNumber = ?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);) {
+
+            pstmt.setInt(1, ID);
+            pstmt.setInt(2, lessonNumber);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 

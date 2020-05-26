@@ -11,5 +11,3 @@ public class Application {
         });
     }
 }
-
-//todo make rows that was selected green

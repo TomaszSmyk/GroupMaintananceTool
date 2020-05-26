@@ -24,5 +24,7 @@ public class TableController extends MouseAdapter {
 
         //todo make it write that presence data to the database
 
+        //todo color table: isPresent==true -> green; isPresent==false -> red
+
     }
 }

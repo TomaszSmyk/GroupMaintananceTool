@@ -1,5 +1,6 @@
 package model;
 
+import javafx.scene.chart.PieChart;
 import view.View;
 
 import javax.swing.*;
@@ -13,30 +14,40 @@ import java.util.TreeSet;
 public class Model {
     private static List<Person> students;
     public static int lessonNumber = 1;
-    private static int activeGroup = 1;
+    public static int activeGroup = 1;
     public Model() {
-        this(1);
+        this(1, 1);
     }
 
-    public Model(int group) {
-        updateStudents();
+    public Model(int group, int lesson) {
+        activeGroup = group;
+        lessonNumber = lesson;
+        updateStudents(); // todo make it update students in given group
         updateStudentTable(group);
     }
 
     private void updateStudents() {
         Database database = new Database();//todo make it Singleton!
         students = database.getAllStudents();
+        //students = database.getStudentsFromGroup(Model.activeGroup);
         for (Person student : students) {
             System.out.println(student);
         }
     }
 
     public void updateStudentTable(int group) {
+        Database database = new Database();
         activeGroup = group;
         JTable table = View.getPresenceTable();
         DefaultTableModel model = new DefaultTableModel(new Object[]{"LP", "First Name", "Second Name", "Group", "Index", "Email", "Presence"}, 0);
 
         for(Person student: students) {
+            //todo make it check in Presence DB if student is already in there and update student presence if so.
+            if (database.isStudentPresenceInDatabaseOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber)) {
+                student.setPresence(database.getStudentPresenceOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber));
+            } else {
+                student.setPresence(true);
+            }
             if (student.getGroupNumber() == group) {
                 model.addRow(student.getData());
             }
@@ -65,11 +76,11 @@ public class Model {
                 System.out.println("Is student in DB: " + database.isStudentIDInDatabase(Integer.parseInt(student.getID())));
                 System.out.println("Is current date in DB: " + database.isDateInDatabase(Model.getCurrentDate()));
                 System.out.println("Is lesson " + lessonNumber + " in DB: " + database.isLessonNumberInDatabase(lessonNumber));
-                boolean abc = database.isStudentIDInDatabase(1) && database.isDateInDatabase(Model.getCurrentDate()) && database.isLessonNumberInDatabase(lessonNumber);
+                boolean abc = database.isStudentPresenceInDatabaseOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber);
                 System.out.println("If: " + abc);
-                if (database.isDateInDatabase(Model.getCurrentDate()) && database.isLessonNumberInDatabase(lessonNumber)) {
+                if (database.isStudentPresenceInDatabaseOnLessonNumber(Integer.parseInt(student.getID()), lessonNumber)) {
                     //todo here will be code to update database, cause such row already exists
-                    database.updatePresence(student.getPresence(), Integer.parseInt(student.getID()));
+                    database.updatePresence(student.getPresence(), Model.lessonNumber,Integer.parseInt(student.getID()));
                 }
                 else {
                     //todo and here will be just insert into database, cause such record is not present in db

@@ -31,20 +31,21 @@ public class Controller implements ActionListener {
             controller.notifyStudentAdded();
             Database db = new Database();
             db.insertStudent(student.getFirstName(), student.getLastName(), student.getIndex(), student.getGroupNumber(), student.getEmail());
-            new Model(student.getGroupNumber());
+            new Model(student.getGroupNumber(), Model.lessonNumber);
         }
         else if (action.equals(Command.GROUP_NUMBER_CHANGED.toString())) {
             JComboBox<Integer> jcb = (JComboBox)actionEvent.getSource();
             groupSelected = (Integer)jcb.getSelectedItem();
-            new Model(groupSelected);
+            new Model(groupSelected, Model.lessonNumber);
         }
         else if (action.equals(Command.WEEK_NUMBER_CHANGED.toString())) {
             JComboBox<Integer> jcb = (JComboBox)actionEvent.getSource();
             System.out.println("Week number:" + jcb.getSelectedItem());
             Model.lessonNumber = (Integer)jcb.getSelectedItem();
+            new Model(Model.activeGroup, (Integer)jcb.getSelectedItem());
         }
     }
     private void notifyStudentAdded() {
-        new Model(this.groupSelected);
+        new Model(this.groupSelected, Model.lessonNumber);
     }
 }
