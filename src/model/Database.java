@@ -282,6 +282,35 @@ public class Database {
         return ids;
     }
 
+    protected int getPresence(int groupNumber, int lessonNumber) {
+
+        String sql = "SELECT COUNT(Presence.IsPresent) AS Attended " +
+                "FROM Presence JOIN Student on Presence.StudentID = Student.StudentID " +
+                "WHERE (Presence.IsPresent=true AND Student.\"group\" = ? AND Presence.LessonNumber = ?) " +
+                "GROUP BY Presence.LessonNumber";
+
+        int attended = 0;
+
+        try (Connection conn = this.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql);) {
+
+            stmt.setInt(1, groupNumber);
+            stmt.setInt(2, lessonNumber);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                attended = rs.getInt("Attended");
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Attended: " + attended + " in group: " + groupNumber + " lesson: " + lessonNumber);
+        return attended;
+    }
+
     public boolean getStudentPresenceOnLessonNumber(int ID, int lessonNumber) {
         String sql = "SELECT IsPresent FROM Presence WHERE (StudentID = ? AND LessonNumber = ?)";
 

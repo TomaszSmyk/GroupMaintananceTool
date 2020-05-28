@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -26,8 +27,14 @@ public class Model {
         updateStudentTable(group);
     }
 
+    public int getPresence(int groupNumber, int lessonNumber) {
+        Database database = new Database();
+        int attended = database.getPresence(groupNumber, lessonNumber);
+        return attended;
+    }
+
     private void updateStudents() {
-        Database database = new Database();//todo make it Singleton!
+        Database database = new Database();
         students = database.getAllStudents();
         //students = database.getStudentsFromGroup(Model.activeGroup);
         for (Person student : students) {
@@ -90,6 +97,7 @@ public class Model {
                 }
             }
         }
+
     }
 
     public static void changeStudentPresence(int id, boolean isPresent) {

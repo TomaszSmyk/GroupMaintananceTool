@@ -4,13 +4,10 @@ import controller.Controller;
 import controller.TabController;
 import controller.TableController;
 import model.Model;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
-import org.jfree.util.Rotation;
+import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +17,7 @@ public class View {
     private JFrame frame = new JFrame("APP");
 
     private JPanel mainPanel = new CustomJPanel();
-    private JTabbedPane tabbedPane = new JTabbedPane();
+    public static JTabbedPane tabbedPane = new JTabbedPane();
 
     private JPanel homePanel = new CustomJPanel();
     private JLabel groupNumberLabel = new JLabel("Group number: ");
@@ -66,7 +63,7 @@ public class View {
     private JPanel deletePanel = new CustomJPanel();
 
 //    private JPanel chartsPanel = new CustomJPanel();
-    private ChartPanel chartsPanel;
+    private static ChartPanel chartsPanel;
 
     protected static final Dimension widowSize = new Dimension(1000, 700);
 
@@ -201,40 +198,15 @@ public class View {
         tabbedPane.add(Command.DELETE.toString(), deletePanel);
     }
 
-    private void setupChartsTab() {
-        PieDataset dataset = createDataset();
-        JFreeChart chart = createChart(dataset, "Title");
+    public static void setupChartsTab() {
+//        LineChart lineChart = new LineChart();
+//        XYDataset dataset = lineChart.createDataset();
+//        JFreeChart chart = lineChart.createChart(dataset);
 
-        chartsPanel = new ChartPanel(chart);
+        chartsPanel = new ChartPanel(LineChart.updateChart());
         tabbedPane.add(Command.CHARTS.toString(), chartsPanel);
     }
 
-    private  PieDataset createDataset() {
-        DefaultPieDataset result = new DefaultPieDataset();
-        result.setValue("Linux", 29);
-        result.setValue("Mac", 20);
-        result.setValue("Windows", 51);
-        return result;
-
-    }
-
-    private JFreeChart createChart(PieDataset dataset, String title) {
-
-        JFreeChart chart = ChartFactory.createPieChart3D(
-                title,                  // chart title
-                dataset,                // data
-                true,                   // include legend
-                true,
-                false
-        );
-
-        PiePlot3D plot = (PiePlot3D) chart.getPlot();
-        plot.setStartAngle(290);
-        plot.setDirection(Rotation.CLOCKWISE);
-        plot.setForegroundAlpha(0.5f);
-        return chart;
-
-    }
 
     private void setupListeners() {
         Controller controller = new Controller();
