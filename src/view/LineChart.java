@@ -32,15 +32,15 @@ public class LineChart {
 
     protected XYDataset createDataset() {
         SortedSet<Integer> groups = model.updateGroupNumbers();
-        var dataset = new XYSeriesCollection();
-        for (var elem: groups) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        for (int elem: groups) {
             dataset.addSeries(createSeriesForGroup(elem));
         }
         return dataset;
     }
 
     private XYSeries createSeriesForGroup(int groupNumber) {
-        var series1 = new XYSeries(groupNumber);
+        XYSeries series1 = new XYSeries(groupNumber);
         for (int lesson = 1; lesson <=15; lesson++) {
             series1.add(lesson, model.getPresence(groupNumber, lesson));
         }
@@ -65,7 +65,7 @@ public class LineChart {
 
         XYPlot plot = chart.getXYPlot();
 
-        var renderer = new XYLineAndShapeRenderer();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 
         renderer.setSeriesPaint(0, Color.RED);
         renderer.setSeriesStroke(0, new BasicStroke(2.0f));

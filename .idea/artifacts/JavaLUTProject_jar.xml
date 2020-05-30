@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JavaLUTProject:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JavaLUTProject_jar</output-path>
+    <root id="archive" name="JavaLUTProject.jar">
+      <element id="module-output" name="JavaLUTProject" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/STUDIA/java/jfreechart-1.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/STUDIA/java/jcommon-1.0.23.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/STUDIA/java/sqlite-jdbc-3.30.1.jar" path-in-jar="/" />
+      <element id="library" level="module" name="JUnit5.4" module-name="JavaLUTProject" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/resources/College.db" />
+    </root>
+  </artifact>
+</component>

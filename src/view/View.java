@@ -5,9 +5,6 @@ import controller.TabController;
 import controller.TableController;
 import model.Model;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.general.PieDataset;
-import org.jfree.data.xy.XYDataset;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,8 +18,8 @@ public class View {
 
     private JPanel homePanel = new CustomJPanel();
     private JLabel groupNumberLabel = new JLabel("Group number: ");
-    private JComboBox<Integer> groupNumbers;
-    private SortedSet<Integer> groups;
+    public static JComboBox<Integer> groupNumbers;
+    public static SortedSet<Integer> groups;
     private JLabel lessonNumberLabel = new JLabel("Lesson number");
     private Integer[] lesson = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     private JComboBox<Integer> lessonNumbers = new JComboBox<>(lesson);
@@ -60,7 +57,15 @@ public class View {
 
     private JButton addButton = new JButton("ADD");
 
-    private JPanel deletePanel = new CustomJPanel();
+    private JPanel removePanel = new CustomJPanel();
+    private JLabel removeFirstNameLabel = new JLabel("First Name: ");
+    public static JTextField removeFirstNameTextField = new JTextField();
+    private JLabel removeLastNameLabel = new JLabel("Last name:");
+    public static JTextField removeLastNameTextField = new JTextField();
+    private JLabel removeIndexLabel = new JLabel("Index:");
+    public static JTextField removeIndexTextField = new JTextField();
+
+    private JButton removeButton = new JButton("REMOVE");
 
 //    private JPanel chartsPanel = new CustomJPanel();
     private static ChartPanel chartsPanel;
@@ -83,7 +88,7 @@ public class View {
         setupHomeTab();
         setupPresenceTab();
         setupAddTab();
-        setupDeleteTab();
+        setupRemoveTab();
         setupChartsTab();
 
         tabbedPane.setTabPlacement(JTabbedPane.LEFT);
@@ -194,8 +199,45 @@ public class View {
 
         tabbedPane.add(Command.ADD.toString(), addPanel);
     }
-    private void setupDeleteTab() {
-        tabbedPane.add(Command.DELETE.toString(), deletePanel);
+    private void setupRemoveTab() {
+        removePanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 1;
+        gbc.weightx = 1;
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        removeFirstNameLabel.setHorizontalAlignment(JLabel.RIGHT);
+        removePanel.add(removeFirstNameLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        removePanel.add(removeFirstNameTextField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        removeLastNameLabel.setHorizontalAlignment(JLabel.RIGHT);
+        removePanel.add(removeLastNameLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        removePanel.add(removeLastNameTextField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        removeIndexLabel.setHorizontalAlignment(JLabel.RIGHT);
+        removePanel.add(removeIndexLabel, gbc);
+
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        removePanel.add(removeIndexTextField, gbc);
+
+        gbc.gridx = 3;
+        gbc.gridy = 5;
+        removePanel.add(removeButton, gbc);
+
+        tabbedPane.add(Command.DELETE.toString(), removePanel);
     }
 
     public static void setupChartsTab() {
@@ -212,6 +254,9 @@ public class View {
         Controller controller = new Controller();
         this.addButton.setActionCommand(Command.ADD.toString());
         this.addButton.addActionListener(controller);
+
+        this.removeButton.setActionCommand(Command.DELETE.toString());
+        this.removeButton.addActionListener(controller);
     }
 
     public static void createAndShowUI() {

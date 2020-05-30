@@ -31,7 +31,18 @@ public class Controller implements ActionListener {
             controller.notifyStudentAdded();
             Database db = new Database();
             db.insertStudent(student.getFirstName(), student.getLastName(), student.getIndex(), student.getGroupNumber(), student.getEmail());
-            new Model(student.getGroupNumber(), Model.lessonNumber);
+            Model model = new Model(student.getGroupNumber(), Model.lessonNumber);
+            View.groupNumbers = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(model.updateGroupNumbers().toArray(new Integer[0])));
+        }
+        else if (action.equals(Command.DELETE.toString())){
+            System.out.println("REMOVING");
+            String fName = View.removeFirstNameTextField.getText();
+            String lName = View.removeLastNameTextField.getText();
+            int index = Integer.parseInt(View.removeIndexTextField.getText());
+            Database db = new Database();
+            db.removeStudentFromDatabase(fName, lName, index);
+            Model model = new Model(Model.activeGroup, Model.lessonNumber);
+            View.groupNumbers = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(model.updateGroupNumbers().toArray(new Integer[0])));
         }
         else if (action.equals(Command.GROUP_NUMBER_CHANGED.toString())) {
             JComboBox<Integer> jcb = (JComboBox)actionEvent.getSource();

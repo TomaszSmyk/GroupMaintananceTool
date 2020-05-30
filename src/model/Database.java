@@ -14,9 +14,12 @@ public class Database {
 
     private Connection connect() {
         // SQLite connection string
-        String url = "jdbc:sqlite:src/resources/College.db";
+
+        String url = "jdbc:sqlite::resource:resources/College.db";
         Connection conn = null;//todo make it singleton
         try {
+            Class.forName("org.sqlite.JDBC");
+//            Class.forName("org.sqlite.JDBC").newInstance();
             conn = DriverManager.getConnection(url);
 //            this.createStudent();
 //            this.createPresence();
@@ -32,6 +35,9 @@ public class Database {
 //                    ex.printStackTrace();
 //                }
 //            });
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
         return conn;
     }
@@ -85,7 +91,7 @@ public class Database {
 
     public void insertStudent(String firstName, String lastName, int index, int group, String email) {
         String sql = "INSERT INTO Student(firstName, lastName, 'index', 'group', email) VALUES (?,?,?,?,?)";
-        System.out.println(firstName + lastName + index + group + email);
+        System.out.println("ADDING STUDENT TO THE DATABASE: " + firstName + lastName + index + group + email);
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, firstName);
@@ -114,6 +120,19 @@ public class Database {
         }
     }
 
+    public void removeStudentFromDatabase(String fName, String lName, int index) {
+        String sql = "DELETE FROM Student WHERE (firstName = ? AND lastName = ? AND \"index\" = ?)";
+
+        try (Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+            pstmt.setString(1, fName);
+            pstmt.setString(2, lName);
+            pstmt.setInt(3, index);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void updatePresence(boolean isPresent, int studentId, int lessonNumber) {
 

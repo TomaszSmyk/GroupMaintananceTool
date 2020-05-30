@@ -64,11 +64,12 @@ public class Model {
     }
 
     public SortedSet<Integer> updateGroupNumbers() {
+        this.updateStudents();
         SortedSet<Integer> groups = new TreeSet<>();
         for(Person student: students) {
             groups.add(student.getGroupNumber());
         }
-        System.out.println(groups);
+        System.out.println("GRUPY: " + groups);
         return groups;
     }
 
