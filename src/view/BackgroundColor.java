@@ -2,6 +2,10 @@ package view;
 
 import java.awt.*;
 
+/**
+ * Colors used to make gradients in custom components classes, also have beginning end point used to create
+ * such gradient that can be easily changed from here
+ */
 public enum BackgroundColor {
 
     COLOR;

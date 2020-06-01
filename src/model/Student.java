@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Its builder with getters, used to store date that later on will be inserted into the database
+ */
 public class Student implements Person {
     private final String ID;
     private final String firstName;

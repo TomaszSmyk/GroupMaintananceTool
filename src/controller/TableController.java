@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Table controller, in case table was clicked displays option pane and updates present of clicked student by invoking
+ * Model methods
+ */
 public class TableController extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -18,13 +22,7 @@ public class TableController extends MouseAdapter {
         JTable sourceTable = (JTable) e.getSource();
         int rowSelected = sourceTable.rowAtPoint(e.getPoint());
         sourceTable.setValueAt(isPresent, rowSelected, 6);
-        //todo make it write that presence data to the student
         int id = Integer.parseInt((String) sourceTable.getValueAt(rowSelected, 0));
         Model.changeStudentPresence(id, isPresent);
-
-        //todo make it write that presence data to the database
-
-        //todo color table: isPresent==true -> green; isPresent==false -> red
-
     }
 }

@@ -5,6 +5,9 @@ import java.awt.*;
 
 import static view.BackgroundColor.COLOR;
 
+/**
+ * Custom class to create custom table with different color
+ */
 public class CustomJTable extends JTable {
     @Override
     protected void paintComponent(Graphics g) {

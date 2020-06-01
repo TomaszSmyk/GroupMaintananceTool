@@ -5,9 +5,14 @@ import java.awt.*;
 
 import static view.BackgroundColor.COLOR;
 
+/**
+ * Custom class to create custom panel with different color
+ */
 public class CustomJPanel extends JPanel {
-    //todo make a constructor that will allow to chose color
 
+    /**
+     * set color as gradient
+     */
     @Override
     protected void paintComponent(Graphics g) {
         setOpaque(false);
@@ -19,6 +24,9 @@ public class CustomJPanel extends JPanel {
         super.paintComponent(g);
     }
 
+    /**
+     * overrides and does nothing to prevent from drawing border
+     */
     @Override
     protected void paintBorder(Graphics g) {
     }

@@ -1,5 +1,8 @@
 package view;
 
+/**
+ * Used to display strings on components and also to set action commands
+ */
 public enum Command {
     HOME,
     PRESENCE,
